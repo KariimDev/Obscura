@@ -5,16 +5,16 @@ obsucura     <-- المجلد الرئيسي للمشروع (Root Directory)
 │
 ├── include/                    <-- (ملفات الترويسة) Header files (.h)
 │   ├── types.h                 <-- هنا نضع الـ Structs التي كتبناها في الخطوة السابقة
-│   ├── linked_lists.h          <-- تعريفات دوال القوائم (Declarations)
-│   ├── stacks_queues.h         <-- تعريفات دوال المكدسات والطوابير
+│   ├── linked_lists_queues.h          <-- تعريفات دوال القوائم (Declarations)
+│   ├── stacks.h         <-- تعريفات دوال المكدسات والطوابير
 │   ├── trees.h                 <-- تعريفات دوال الأشجار
 │   ├── recursion.h             <-- تعريفات الدوال العودية (Recursive functions)
 │   └── gui.h                   <-- تعريفات دوال الواجهة الرسومية
 │
 ├── src/                        <-- (الأكواد المصدرية) Source files (.c)
 │   ├── main.c                  <-- الدالة الرئيسية والقائمة (Main function & Menu)
-│   ├── linked_lists.c          <-- برمجة دوال القوائم (Implementations)
-│   ├── stacks_queues.c         <-- برمجة دوال المكدسات والطوابير
+│   ├── linked_lists_queues.c          <-- برمجة دوال القوائم (Implementations)
+│   ├── stacks.c         <-- برمجة دوال المكدسات والطوابير
 │   ├── trees.c                 <-- برمجة دوال الأشجار
 │   ├── recursion.c             <-- برمجة الدوال العودية
 │   └── file_parser.c           <-- الأكواد المسؤولة عن قراءة الملف النصي وتقسيمه
