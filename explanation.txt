@@ -1,0 +1,54 @@
+Explanation of Functions in src/linked_lists_queues.c
+
+1. updatePersonality: Updates a personality's info in memory and synchronizes with the text file.
+   - It iterates through the list 's' to find the name and update its details.
+   - It iterates through the list 'a' (dates list) to keep it in sync.
+   - It re-opens the history_data.txt in "w" mode to overwrite the file with the updated information from list 's'.
+
+2. similarPersonality: Extracts personalities that share a specific birth or death year.
+   - It creates a new list 'newList'.
+   - It loops through the input list 's'.
+   - If the date_of_birth or date_of_death matches the input 'word', it creates a new node and appends it to 'newList'.
+
+3. countPersonality: Searches for a specific date or string within birth, death, or definition fields.
+   - It uses strstr() to find the search string 'prt' in three different fields of each node.
+   - Matching personalities are added to a new returned list.
+
+4. palindromeName: Identifies palindromes within the definitions and returns them in a sorted list.
+   - isPalindrome() is a helper that checks if a string reads the same forwards and backwards.
+   - It tokens the definition string into individual words.
+   - It checks each word for being a palindrome.
+   - If found, it inserts the word into a new list while maintaining alphabetical order (insertion sort).
+
+5. mergeNodes: Combines data from two separate lists (info list and dates list) into one.
+   - It creates a new bidirectional list.
+   - For each node in list 's', it searches for the corresponding node in list 'a' by name.
+   - It merges all data (name, definition, birth, death) into a single new node.
+
+6. merge2Nodes: Same as mergeNodes but creates a circular linked list.
+   - It first calls mergeNodes to get a standard list.
+   - It then finds the last node and makes its 'next' point to the head, and head's 'prev' point to the tail.
+
+7. addPersonality: Adds a new personality to both lists and appends it to the source file.
+   - It creates nodes and appends them to the end of lists 's' and 'a'.
+   - It opens the file in "a" (append) mode to add the new line without erasing existing data.
+
+8. addEvents: Adds a generic event to the list and the text file.
+   - It treats events as personalities without definitions.
+   - It appends the event to the file in a specific format.
+
+9. createQueueNode: A helper to allocate and initialize a Queue node.
+   - It uses malloc and memset for safety and copies all fields using strncpy.
+
+10. sName: Converts the list to a Queue and sorts names by the number of words they contain.
+    - countWords() counts spaces to determine word count in a name.
+    - It first copies the list to a Queue.
+    - It then uses bubble sort on the Queue to order by name length (word count).
+
+11. ageP: Sorts personalities by age into a Queue.
+    - It calculates age as (Death Year - Birth Year).
+    - It sorts the resulting Queue in ascending order of age.
+
+12. toQueue: Converts a TList (including circular) into a TQueue.
+    - It handles circularity by checking if the next node is the head.
+    - It returns the head of the new Queue.
