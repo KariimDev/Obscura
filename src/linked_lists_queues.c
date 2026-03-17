@@ -31,10 +31,6 @@ struct TList* createListNode(char* new_name, char* new_def, char* new_dob, char*
     return newNode;
 }
 
-
-
-
-
 struct TList* getPersonality(FILE *f) {
     if (f == NULL) {
         return NULL;
@@ -97,137 +93,6 @@ struct TList* getPersonality(FILE *f) {
     }
     return head; 
 }
-
-struct TList* updatePersonality(FILE *f, struct TList *s, struct TList *a, char *name, char *definition, char *DoB, char *DoD) {
-    struct TList *curr_s = s;
-    while (curr_s != NULL) {
-        if (strcmp(curr_s->name, name) == 0) {
-            strncpy(curr_s->definition, definition, sizeof(curr_s->definition) - 1);
-            strncpy(curr_s->date_of_birth, DoB, sizeof(curr_s->date_of_birth) - 1);
-            strncpy(curr_s->date_of_death, DoD, sizeof(curr_s->date_of_death) - 1);
-            break;
-        }
-        curr_s = curr_s->next;
-    }
-    struct TList *curr_a = a;
-    while (curr_a != NULL) {
-        if (strcmp(curr_a->name, name) == 0) {
-            strncpy(curr_a->date_of_birth, DoB, sizeof(curr_a->date_of_birth) - 1);
-            strncpy(curr_a->date_of_death, DoD, sizeof(curr_a->date_of_death) - 1);
-            break;
-        }
-        curr_a = curr_a->next;
-    }
-    f = fopen("data/history_data.txt", "w");
-    if (f != NULL) {
-        struct TList *curr = s;
-        while (curr != NULL) {
-            fprintf(f, "%s=%s:Birth{%s}Death{%s}\n", curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
-            curr = curr->next;
-        }
-        fclose(f);
-    }
-    return s;
-}
-
-struct TList* similarPersonality(struct TList *s, char *word) {
-    struct TList *newList = NULL;
-    struct TList *tail = NULL;
-    struct TList *curr = s;
-    while (curr != NULL) {
-        if (strcmp(curr->date_of_birth, word) == 0 || strcmp(curr->date_of_death, word) == 0) {
-            struct TList *newNode = createListNode(curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
-            if (newList == NULL) { newList = newNode; tail = newNode; }
-            else { tail->next = newNode; newNode->prev = tail; tail = newNode; }
-        }
-        curr = curr->next;
-    }
-    return newList;
-}
-
-struct TList* countPersonality(struct TList *s, char *prt) {
-    struct TList *newList = NULL;
-    struct TList *tail = NULL;
-    struct TList *curr = s;
-    while (curr != NULL) {
-        if (strstr(curr->date_of_birth, prt) || strstr(curr->date_of_death, prt) || strstr(curr->definition, prt)) {
-            struct TList *newNode = createListNode(curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
-            if (newList == NULL) { newList = newNode; tail = newNode; }
-            else { tail->next = newNode; newNode->prev = tail; tail = newNode; }
-        }
-        curr = curr->next;
-    }
-    return newList;
-}
-
-int isPalindrome(char *str) {
-    int len = strlen(str);
-    if (len <= 1) return 0;
-    for (int i = 0; i < len / 2; i++) {
-        if (tolower(str[i]) != tolower(str[len - 1 - i])) return 0;
-    }
-    return 1;
-}
-
-struct TList* palindromeName(struct TList *s) {
-    struct TList *newList = NULL;
-    struct TList *curr = s;
-    while (curr != NULL) {
-        char def_copy[1024];
-        strcpy(def_copy, curr->definition);
-        char *token = strtok(def_copy, " ,.:;!?");
-        while (token != NULL) {
-            if (isPalindrome(token)) {
-                struct TList *newNode = createListNode(token, "", "", "");
-                if (newList == NULL) { newList = newNode; }
-                else {
-                    struct TList *temp = newList;
-                    struct TList *prev_temp = NULL;
-                    while (temp != NULL && strcmp(temp->name, token) < 0) {
-                        prev_temp = temp;
-                        temp = temp->next;
-                    }
-                    if (prev_temp == NULL) { newNode->next = newList; newList->prev = newNode; newList = newNode; }
-                    else { newNode->next = temp; if (temp) temp->prev = newNode; newNode->prev = prev_temp; prev_temp->next = newNode; }
-                }
-            }
-            token = strtok(NULL, " ,.:;!?");
-        }
-        curr = curr->next;
-    }
-    return newList;
-}
-
-struct TList* mergeNodes(struct TList *s, struct TList *a) {
-    struct TList *newList = NULL;
-    struct TList *tail = NULL;
-    struct TList *curr_s = s;
-    while (curr_s != NULL) {
-        struct TList *curr_a = a;
-        while (curr_a != NULL) {
-            if (strcmp(curr_s->name, curr_a->name) == 0) {
-                struct TList *newNode = createListNode(curr_s->name, curr_s->definition, curr_a->date_of_birth, curr_a->date_of_death);
-                if (newList == NULL) { newList = newNode; tail = newNode; }
-                else { tail->next = newNode; newNode->prev = tail; tail = newNode; }
-                break;
-            }
-            curr_a = curr_a->next;
-        }
-        curr_s = curr_s->next;
-    }
-    return newList;
-}
-
-struct TList* merge2Nodes(struct TList *s, struct TList *a) {
-    struct TList *head = mergeNodes(s, a);
-    if (head == NULL) return NULL;
-    struct TList *tail = head;
-    while (tail->next != NULL) tail = tail->next;
-    tail->next = head;
-    head->prev = tail;
-    return head;
-}
-
 
 struct TList* getDatePersonality(FILE *f) {
     if (f == NULL) return NULL;
@@ -307,7 +172,6 @@ struct TList* getDatePersonality(FILE *f) {
     return head; 
 }
 
-
 void getInfoByDates(struct TList *s, struct TList *DoB) {
     char search_date[50];
     int found = 0;
@@ -340,7 +204,6 @@ void getInfoByDates(struct TList *s, struct TList *DoB) {
         printf("No personality found with the Date of Birth: %s\n", search_date);
     }
 }
-
 
 void getInfoByDates2(struct TList *s, struct TList *DoD) {
     char search_date[50];
@@ -546,6 +409,44 @@ struct TList* deleteFromList(struct TList *head, char *name) {
 struct TList* deletepersonality(FILE *f, struct TList *s, struct TList *a, char *name) {
     s = deleteFromList(s, name);
     a = deleteFromList(a, name);
+    // this for opening the file in the write mode
+    f = fopen("data/history_data.txt", "w");
+    if (f == NULL) {
+        printf("error opening file\n");
+        return s;
+    }
+    
+    if (f != NULL) {
+        struct TList *curr = s;
+        while (curr != NULL) {
+            fprintf(f, "%s=%s:Birth{%s}Death{%s}\n", curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
+            curr = curr->next;
+        }
+        fclose(f);
+    }
+    return s;
+}
+
+struct TList* updatePersonality(FILE *f, struct TList *s, struct TList *a, char *name, char *definition, char *DoB, char *DoD) {
+    struct TList *curr_s = s;
+    while (curr_s != NULL) {
+        if (strcmp(curr_s->name, name) == 0) {
+            strncpy(curr_s->definition, definition, sizeof(curr_s->definition) - 1);
+            strncpy(curr_s->date_of_birth, DoB, sizeof(curr_s->date_of_birth) - 1);
+            strncpy(curr_s->date_of_death, DoD, sizeof(curr_s->date_of_death) - 1);
+            break;
+        }
+        curr_s = curr_s->next;
+    }
+    struct TList *curr_a = a;
+    while (curr_a != NULL) {
+        if (strcmp(curr_a->name, name) == 0) {
+            strncpy(curr_a->date_of_birth, DoB, sizeof(curr_a->date_of_birth) - 1);
+            strncpy(curr_a->date_of_death, DoD, sizeof(curr_a->date_of_death) - 1);
+            break;
+        }
+        curr_a = curr_a->next;
+    }
     f = fopen("data/history_data.txt", "w");
     if (f != NULL) {
         struct TList *curr = s;
@@ -558,14 +459,138 @@ struct TList* deletepersonality(FILE *f, struct TList *s, struct TList *a, char 
     return s;
 }
 
+struct TList* similarPersonality(struct TList *s, char *word) {
+    struct TList *newList = NULL;
+    struct TList *tail = NULL;
+    struct TList *curr = s;
+    while (curr != NULL) {
+        if (strcmp(curr->date_of_birth, word) == 0 || strcmp(curr->date_of_death, word) == 0) {
+            struct TList *newNode = createListNode(curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
+            if (newList == NULL) {
+                newList = newNode; 
+                tail = newNode; 
+            }
+            else {
+                tail->next = newNode; 
+                newNode->prev = tail; 
+                tail = newNode; 
+            }
+        }
+        curr = curr->next;
+    }
+    return newList;
+}
+
+struct TList* countPersonality(struct TList *s, char *prt) {
+    struct TList *newList = NULL;
+    struct TList *tail = NULL;
+    struct TList *curr = s;
+    while (curr != NULL) {
+        if (strstr(curr->date_of_birth, prt) || strstr(curr->date_of_death, prt) || strstr(curr->definition, prt)) {
+            struct TList *newNode = createListNode(curr->name, curr->definition, curr->date_of_birth, curr->date_of_death);
+            if (newList == NULL) { newList = newNode; tail = newNode; }
+            else { tail->next = newNode; newNode->prev = tail; tail = newNode; }
+        }
+        curr = curr->next;
+    }
+    return newList;
+}
+
+int isPalindrome(char *str) {
+    int len = strlen(str);
+    if (len <= 1) return 0;
+    for (int i = 0; i < len / 2; i++) {
+        if (tolower(str[i]) != tolower(str[len - 1 - i])) return 0;
+    }
+    return 1;
+}
+
+struct TList* palindromeName(struct TList *s) {
+    struct TList *newList = NULL;
+    struct TList *curr = s;
+    while (curr != NULL) {
+        char def_copy[1024];
+        strcpy(def_copy, curr->definition);
+        char *token = strtok(def_copy, " ,.:;!?");
+        while (token != NULL) {
+            if (isPalindrome(token)) {
+                struct TList *newNode = createListNode(token, "", "", "");
+                if (newList == NULL) { newList = newNode; }
+                else {
+                    struct TList *temp = newList;
+                    struct TList *prev_temp = NULL;
+                    while (temp != NULL && strcmp(temp->name, token) < 0) {
+                        prev_temp = temp;
+                        temp = temp->next;
+                    }
+                    if (prev_temp == NULL) { newNode->next = newList; newList->prev = newNode; newList = newNode; }
+                    else { newNode->next = temp; if (temp) temp->prev = newNode; newNode->prev = prev_temp; prev_temp->next = newNode; }
+                }
+            }
+            token = strtok(NULL, " ,.:;!?");
+        }
+        curr = curr->next;
+    }
+    return newList;
+}
+
+struct TList* mergeNodes(struct TList *s, struct TList *a) {
+    struct TList *newList = NULL;
+    struct TList *tail = NULL;
+    struct TList *curr_s = s;
+    while (curr_s != NULL) {
+        struct TList *curr_a = a;
+        while (curr_a != NULL) {
+            if (strcmp(curr_s->name, curr_a->name) == 0) {
+                struct TList *newNode = createListNode(curr_s->name, curr_s->definition, curr_a->date_of_birth, curr_a->date_of_death);
+                if (newList == NULL) { newList = newNode; tail = newNode; }
+                else { tail->next = newNode; newNode->prev = tail; tail = newNode; }
+                break;
+            }
+            curr_a = curr_a->next;
+        }
+        curr_s = curr_s->next;
+    }
+    return newList;
+}
+
+struct TList* merge2Nodes(struct TList *s, struct TList *a) {
+    struct TList *head = mergeNodes(s, a);
+    if (head == NULL) return NULL;
+    struct TList *tail = head;
+    while (tail->next != NULL) tail = tail->next;
+    tail->next = head;
+    head->prev = tail;
+    return head;
+}
+
 struct TList* addPersonality(struct TList *s, struct TList *a, char *name, char *DoB, char *DoD) {
     struct TList *newNodeS = createListNode(name, "", DoB, DoD);
     struct TList *newNodeA = createListNode(name, "", DoB, DoD);
-    if (s == NULL) s = newNodeS;
-    else { struct TList *t = s; while(t->next) t = t->next; t->next = newNodeS; newNodeS->prev = t; }
-    if (a == NULL) a = newNodeA;
-    else { struct TList *t = a; while(t->next) t = t->next; t->next = newNodeA; newNodeA->prev = t; }
+    if (s == NULL) {
+        s = newNodeS;
+    }
+    else {
+        struct TList *t = s;
+        while(t->next) {
+            t = t->next;
+        }
+        t->next = newNodeS;
+        newNodeS->prev = t;
+    }
+    if (a == NULL) {
+        a = newNodeA;
+    }
+    else {
+        struct TList *t = a;
+        while(t->next) {
+            t = t->next;
+        }
+        t->next = newNodeA;
+        newNodeA->prev = t;
+    }
     FILE *f = fopen("data/history_data.txt", "a");
+    // a mean add without deleting the old data
     if (f != NULL) {
         fprintf(f, "%s=:Birth{%s}Death{%s}\n", name, DoB, DoD);
         fclose(f);
@@ -575,8 +600,17 @@ struct TList* addPersonality(struct TList *s, struct TList *a, char *name, char 
 
 struct TList* addEvents(struct TList *b, char *namEvente, char *date) {
     struct TList *newNode = createListNode(namEvente, "", date, "");
-    if (b == NULL) b = newNode;
-    else { struct TList *t = b; while(t->next) t = t->next; t->next = newNode; newNode->prev = t; }
+    if (b == NULL) {
+        b = newNode;
+    }
+    else {
+        struct TList *t = b;
+        while(t->next) {
+            t = t->next;
+        }
+        t->next = newNode;
+        newNode->prev = t;
+    }
     FILE *f = fopen("data/history_data.txt", "a");
     if (f != NULL) {
         fprintf(f, "Event:%s{%s}\n", namEvente, date);
@@ -669,6 +703,3 @@ struct TQueue* toQueue(struct TList *merged) {
     }
     return q;
 }
-
-
-
